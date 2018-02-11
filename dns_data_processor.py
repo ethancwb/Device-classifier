@@ -5,7 +5,7 @@ from tabulate import tabulate
 
 path = 'E:\\MonIOTr\\0%3Ae%3Af3%3A3b%3A85%3Ae5\\0-e-f3-3b-85-e5-dns.csv'
 df = pd.read_csv(path,error_bad_lines=False,sep='\t')
-        
+print(df.head())
 
 class data_feature_extractor:
     def __init__(self,df):
@@ -13,6 +13,7 @@ class data_feature_extractor:
         self.features={}
         
     def feature_eth_src(self):
+        print(list(self.dataframe))
         ethsrc=self.dataframe["eth.src_resolved"]
         unique_list=ethsrc.unique()      
         for each in  unique_list:
@@ -33,13 +34,44 @@ class data_feature_extractor:
                 
                 for every in each.split(","):
                     self.features[every]=1
-        
-                  
-        
-        
-        
-fe_obj=data_feature_extractor(df)
+    def cname(self):
+        answer=self.dataframe["dns.cname"].dropna().unique()
+        for each in  answer:
+            if each !='dns.cname':
 
+                for every in each.split(","):
+                    self.features[every]=1
+
+    def cname_anscount(self):
+        answer=self.dataframe["dns.cname"].dropna().unique()
+        for each in  answer:
+            if each !='dns.cname':
+
+                for every in each.split(","):
+                    self.features[every]=1
+
+    def qname(self):
+        answer=self.dataframe["dns.qry.name"].dropna().unique()
+
+        for each in  answer:
+            if each !='dns.qry.name':
+
+                for every in each.split(","):
+                    self.features[every]=1
+    def rname(self):
+        answer=self.dataframe["dns.resp.name"].dropna().unique()
+
+        for each in  answer:
+            if each !='dns.resp.name':
+
+                for every in each.split(","):
+                    self.features[every]=1
+        print(self.features)
+fe_obj=data_feature_extractor(df)
+#
 fe_obj.feature_eth_src()
 fe_obj.pckt_length()
 fe_obj.dsn_answers_A()
+fe_obj.cname_anscount()
+fe_obj.qname()
+fe_obj.rname()
