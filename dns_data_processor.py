@@ -2,12 +2,7 @@ import pandas as pd
 import glob
 import numpy as np
 from tabulate import tabulate
-
-path = 'E:\\MonIOTr\\0%3Ae%3Af3%3A3b%3A85%3Ae5\\0-e-f3-3b-85-e5-dns.csv'
-path__http = 'E:\\MonIOTr\\0%3Ae%3Af3%3A3b%3A85%3Ae5\\0-e-f3-3b-85-e5-http.csv'
-
-df = pd.read_csv(path,error_bad_lines=False,sep='\t')
-df_http = pd.read_csv(path__http,error_bad_lines=False,sep='\t')
+import json
 
 class data_feature_extractor:
     def __init__(self, df,df_http):
@@ -148,23 +143,22 @@ class data_feature_extractor:
                 self.formatted['feature_strings'][name]=float(counts[name] / self.totalPackets)
     def formatted_output(self):
         self.feature_eth_src()
-        self.pckt_length()
-        self.dsn_answers_A()
+        #self.pckt_length()
+        #self.dsn_answers_A()
         self.cname()
         self.qname()
         self.rname()
-        self.content_length()
-        self.content_type()
+        #self.content_length()
+        #self.content_type()
 
         self.feature_http_host()
         self.feature_http_request_uri()
-        self.feature_http_response()
+        #self.feature_http_response()
         self.feature_http_server()
         totalCount = len(self.dataframe)
         self.formatted['total_packets'] = totalCount
-        print (self.formatted)
+
         return self.formatted
 
 
-fe_obj = data_feature_extractor(df,df_http)
-fe_obj.formatted_output()
+
