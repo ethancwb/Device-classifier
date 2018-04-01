@@ -1,4 +1,4 @@
-import dns_data_processor
+import feature_processor
 import  pandas as pd
 from sklearn.tree import DecisionTreeClassifier ,export_graphviz
 
@@ -75,7 +75,7 @@ def processXY(Y,trainpath,modelpath,train_files,type="Train",features="None"):
                         df_payload = pd.read_csv(payload, error_bad_lines=False, sep='\t', low_memory=False)
 
 
-                        d = dns_data_processor.data_feature_extractor(df, df_http, df_general, df_dstport, df_payload)
+                        d = feature_processor.data_feature_extractor(df, df_http, df_general, df_dstport, df_payload)
                         features_dict=d.formatted_output()
                         print("Number of featueres for Device:-",len(features_dict))
 
@@ -153,8 +153,9 @@ if __name__ == "__main__":
         trainpath=configuration.Train_loc
         modelpath=str(configuration.Model_loc)
         #Set to False to create a new set of traning data and model,Set true to only generate a new model with existing data
-        parameters=False
+        parameters=True
         if not parameters:
+
                 trainfiles=readfiles(trainpath)
                 Y=y_values(trainfiles)
                 processXY(Y,trainpath,modelpath,train_files)
