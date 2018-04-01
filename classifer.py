@@ -1,100 +1,165 @@
 import dns_data_processor
 import  pandas as pd
 from sklearn.tree import DecisionTreeClassifier ,export_graphviz
-from sklearn.metrics import accuracy_score,confusion_matrix
-from os import walk
+
+from os import walk,path
 import  numpy as np
-import matplotlib.pyplot as plt
-import sys
-from sklearn import linear_model
+import configuration
+import pickle
+import glob
+from sklearn import svm
+from sklearn.linear_model import LogisticRegression
+from subprocess import call
+from sklearn.externals.six import StringIO
+from IPython.display import Image
+from sklearn.tree import export_graphviz
+import pydotplus
 
-Y_train=set()
-X_train=pd.DataFrame(columns=["Device Mac"])
-X_train.set_index("Device Mac")
-files = []
-path='E:\\MonIOTr\\'
-for (dirpath, dirnames, filenames) in walk(path):
-        files.extend(filenames)
-        break
-
-
-for each in files:
-        val= each.split("-")
-
-        if len(val)>3:
-                Y_train.add( "-".join(val[0:6]))
-        else:
-                print(each)
-                Y_train.add(each.split("-")[0])
-print(Y_train)
-
-Y_Train=set()
-for each in Y_train:
-        dns = path+each+'-dns.csv'
-        http = path+each+'-http.csv'
-
-        try:
-                df = pd.read_csv(dns,error_bad_lines=False,sep='\t')
-                df_http = pd.read_csv(http,error_bad_lines=False,sep='\t')
-                if df.shape[0]!=0 or df_http.shape[0]!=0:
-                        Y_Train.add(each)
-                print()
-                fe_obj = dns_data_processor.data_feature_extractor(df,df_http)
-                features_dict=fe_obj.formatted_output()
-                for obj in features_dict:
-                        if len(features_dict[obj])>0 and isinstance(features_dict[obj],dict):
-                                for i,val in features_dict[obj].items():
-                                        X_train.ix[each,i]=1
-        except:
-                pass
+import os
 
 
-X_train=X_train.fillna(0)
-features_list=list(X_train.columns.values)
-X_train=X_train.as_matrix()
-X_Test=pd.DataFrame(columns=features_list)
+#List all the training files
+
+def readfiles(trainpath):
+
+        files=[]
+        for (dirpath, dirnames, filenames) in walk(trainpath):
+                files.extend(filenames)
+                break
+        return files
+def y_values(files):
+
+        Y_train=set()
+        for each in files:
+                val= each.split("-")
+
+                if len(val)>3:
+                        Y_train.add( "-".join(val[0:6]))
+                else:
+                        Y_train.add(each.split("-")[0])
+        return Y_train
+
+def processXY(Y,trainpath,modelpath,train_files,type="Train",features="None"):
+        if type=="Train":
+                X=pd.DataFrame(columns=["Device Mac"])
+                X.set_index("Device Mac")
+                tail_dns='-dns.csv'
+                tail_http='-http.csv'
+                tail_dstport='-dstport.csv'
+                tail_general='-general.csv'
+                tail_payload='-payload.csv'
+
+        elif type=="Test":
+                X=pd.DataFrame(columns=features)
+                tail_dns='-test-dns.csv'
+                tail_http='-test-http.csv'
+                tail_dstport='-test-dstport.csv'
+                tail_general='-test-general.csv'
+                tail_payload='-test-payload.csv'
+        for each in Y:
+
+                dns = trainpath+each+tail_dns
+                http = trainpath+each+tail_http
+
+                dstport = trainpath+each+tail_dstport
+                general = trainpath+each+tail_general
+                payload = trainpath+each+tail_payload
+
+                try:
+
+                        print("Processing train data for device",each)
+                        df = pd.read_csv(dns, error_bad_lines=False, sep='\t', low_memory=False)
+                        df_http = pd.read_csv(http, error_bad_lines=False, sep='\t', low_memory=False)
+                        df_dstport = pd.read_csv(dstport, error_bad_lines=False, sep='\t', low_memory=False)
+                        df_general = pd.read_csv(general, error_bad_lines=False, sep='\t', low_memory=False)
+                        df_payload = pd.read_csv(payload, error_bad_lines=False, sep='\t', low_memory=False)
 
 
-y_True=set()
-for each in Y_train:
-        dns = path+each+'-test-dns.csv'
-        http = path+each+'-test-http.csv'
+                        d = dns_data_processor.data_feature_extractor(df, df_http, df_general, df_dstport, df_payload)
+                        features_dict=d.formatted_output()
+                        print("Number of featueres for Device:-",len(features_dict))
 
-        try:
-                df = pd.read_csv(dns,error_bad_lines=False,sep='\t')
-                df_http = pd.read_csv(http,error_bad_lines=False,sep='\t')
-                if df.shape[0]!=0 or df_http.shape[0]!=0:
-                        y_True.add(each)
+                        for obj in features_dict:
 
-                fe_obj = dns_data_processor.data_feature_extractor(df,df_http)
-                features_dict=fe_obj.formatted_output()
+                                if obj=="others":
+                                        if len(features_dict[obj])>0 and isinstance(features_dict[obj],dict):
 
-                for obj in features_dict:
+                                                for i,val in features_dict[obj].items():
+                                                        if type=="Train":
+                                                                X.ix[each,i]=val
+                                                        elif type=="Test":
+                                                                if i in features:
+                                                                        X.ix[each,i]=val
 
-                        if len(features_dict[obj])>0 and isinstance(features_dict[obj],dict):
+                                else:
+                                        if len(features_dict[obj])>0 and isinstance(features_dict[obj],dict):
 
-                                for i,val in features_dict[obj].items():
+                                                for i,val in features_dict[obj].items():
+                                                        if type=="Train":
+                                                                X.ix[each,i]=1
+                                                        elif type=="Test":
+                                                                if i in features:
+                                                                        X.ix[each,i]=1
 
-                                        if i in features_list:
-                                                X_Test.ix[each,i]=1
-
-        except:
-                pass
-
-X_Test=X_Test.fillna(0)
-
-X_Test=X_Test.as_matrix()
-dt = linear_model.LogisticRegression()
-#dt = DecisionTreeClassifier(random_state=99)
-
-dt.fit(X_train, list(Y_Train))
-
-y_pred=dt.predict(X_Test)
-
-with open("fruit_classifier.txt", "w") as f:
-        f = export_graphviz(dt, out_file=f)
+                except Exception as e:
+                        print (str(e))
 
 
-cnf_matrix = confusion_matrix(list(y_True), y_pred)
-np.set_printoptions(precision=2)
-print(cnf_matrix)
+        X=X.fillna(0)
+
+        X.to_csv(train_files+type+".csv")
+
+        if type=="Train":
+                features_list=list(X.columns.values)
+                filename = modelpath+"features"
+                pickle.dump(features_list, open(filename, 'wb'))
+
+
+
+def gen_model(train,path,alg="DT",modeltype="Multiclass"):
+
+        print("The Algorithm used is" ,alg)
+        X_Train = pd.read_csv(train+"Train.csv", error_bad_lines=False).set_index("Unnamed: 0")
+
+        Y_Train=np.asarray(list(X_Train.index))
+        X_Train=X_Train.as_matrix()
+
+        if alg=="DT":
+                model = DecisionTreeClassifier(random_state=99)
+
+        if alg=="LG":
+                model = LogisticRegression(C=1., solver='lbfgs')
+        if alg=="SVM":
+                print(alg)
+                model= svm.SVC(decision_function_shape='ovo')
+
+        model.fit(X_Train,Y_Train)
+        if alg=="DT":
+                print(alg)
+                dotfile = open("dtree2.dot", 'w')
+                export_graphviz(model, out_file=dotfile,
+                                filled=True, rounded=True,
+                                special_characters=True)
+                dotfile.close()
+
+
+        filename = path+'model_'+alg
+        pickle.dump(model, open(filename, 'wb'))
+
+
+if __name__ == "__main__":
+        #Initializing the Training and Testing Data Frames
+        train_files=configuration.train_dataset
+        trainpath=configuration.Train_loc
+        modelpath=str(configuration.Model_loc)
+        #Set to False to create a new set of traning data and model,Set true to only generate a new model with existing data
+        parameters=False
+        if not parameters:
+                trainfiles=readfiles(trainpath)
+                Y=y_values(trainfiles)
+                processXY(Y,trainpath,modelpath,train_files)
+
+        gen_model(train_files,modelpath,alg="DT")
+
+
+
