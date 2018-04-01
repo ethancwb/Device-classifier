@@ -54,3 +54,4 @@ First we need to run the pcap file parser in order to get the field we want:
     configuration.py
     pareses the config.ini file and passes as arguments to the classifeir and the prediction
     
+    Spertare
