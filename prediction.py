@@ -7,13 +7,16 @@ import numpy as np
 
 def predict(testdata,modelpath,alg="DT"):
 
-    print("The Algorithm used is" ,alg)
+    #print("The Algorithm used is" ,alg)
     filename = modelpath+'model_'+alg
+
     with open(filename, 'rb') as f:
         model = pickle.load(f)
-    X_Test = pd.read_csv(testdata+"Train.csv", error_bad_lines=False).set_index("Unnamed: 0")
+    X_Test = pd.read_csv(testdata+"Test.csv", error_bad_lines=False).set_index("Unnamed: 0")
+    print(len(X_Test.columns))
     Y_True=np.asarray(list(X_Test.index))
     X_Test=X_Test.as_matrix()
+
     Y_Pred=model.predict(X_Test)
     return Y_Pred,Y_True
 
@@ -31,7 +34,7 @@ if __name__ == "__main__":
     #Initializing the Training and Testing Data Frames
     testpath=configuration.Test_loc
     modelpath=configuration.Model_loc
-    test_files=configuration.train_dataset
+    test_files=configuration.test_dataset
     parameter=True
     if not parameter:
         filename = modelpath+'features'
@@ -45,7 +48,7 @@ if __name__ == "__main__":
         classifer.processXY(Y,testpath,modelpath,test_files,type="Test",features=features)
 
     Y_Pred,Y_True=predict(test_files,modelpath,alg="DT")
-    print(Y_True)
-    print(Y_Pred)
+    print(Y_True,Y_Pred)
+
     metrics(Y_Pred,Y_True)
 

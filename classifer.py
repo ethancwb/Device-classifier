@@ -67,7 +67,7 @@ def processXY(Y,trainpath,modelpath,train_files,type="Train",features="None"):
 
                 try:
 
-                        print("Processing train data for device",each)
+                        print("Processing  data for device",each)
                         df = pd.read_csv(dns, error_bad_lines=False, sep='\t', low_memory=False)
                         df_http = pd.read_csv(http, error_bad_lines=False, sep='\t', low_memory=False)
                         df_dstport = pd.read_csv(dstport, error_bad_lines=False, sep='\t', low_memory=False)
@@ -125,9 +125,11 @@ def gen_model(train,path,alg="DT",modeltype="Multiclass"):
         X_Train=X_Train.as_matrix()
 
         if alg=="DT":
+                print(alg)
                 model = DecisionTreeClassifier(random_state=99)
 
         if alg=="LG":
+                print(alg)
                 model = LogisticRegression(C=1., solver='lbfgs')
         if alg=="SVM":
                 print(alg)
@@ -160,7 +162,7 @@ if __name__ == "__main__":
                 Y=y_values(trainfiles)
                 processXY(Y,trainpath,modelpath,train_files)
 
-        gen_model(train_files,modelpath,alg="DT")
+        gen_model(train_files,modelpath,alg="SVM")
 
 
 
