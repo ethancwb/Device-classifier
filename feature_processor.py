@@ -36,7 +36,7 @@ class data_feature_extractor:
 
     def pckt_length(self):
         pktlen = self.dataframe["_ws.col.Length"]
-        print(pktlen)
+        # print(pktlen)
         counts = pktlen.value_counts()
         name_list = counts.index.tolist()
         for each in pktlen.unique():
@@ -44,7 +44,7 @@ class data_feature_extractor:
                 self.features[each] = 1
         for name in name_list:
             if name != '_ws.col.Length':
-                self.formatted['others'].append(int(name))
+                self.formatted['others']['pkt_length'] = int(name)
 
     def dsn_answers_A(self):
         answer = self.dataframe["dns.a"].dropna().unique()
@@ -218,7 +218,7 @@ class data_feature_extractor:
         self.formatted['others']['time_std'] = statistics.stdev(time_list)
 
     def content_length(self):
-        print(self.dataframe_http)
+        # print(self.dataframe_http)
         conLen = self.dataframe_http["http.content_length"]
         counts = conLen.value_counts()
         name_list = counts.index.tolist()
@@ -227,7 +227,7 @@ class data_feature_extractor:
                 self.features[each] = 1
         for name in name_list:
             if name != 'http.content_length':
-                self.formatted['others'].append(int(name))
+                self.formatted['others']['content_length'] = int(name)
 
     def content_type(self):
         conType = self.dataframe_http["http.content_type"]
@@ -238,7 +238,7 @@ class data_feature_extractor:
                 self.features[each] = 1
         for name in name_list:
             if name != 'http.content_type':
-                self.formatted['others'].append(name)
+                self.formatted['others']['content_type'] = name
 
     def feature_http_host(self):
         host = self.dataframe_http["http.host"]
@@ -287,24 +287,25 @@ class data_feature_extractor:
 
     def formatted_output(self):
         self.feature_eth_src()
-        #self.pckt_length()
-        #self.dsn_answers_A()
+        # # self.pckt_length()
+        # # self.dsn_answers_A()
         self.cname()
         self.qname()
         self.rname()
-        #self.content_length()
-        #self.content_type()
-
+        # # self.content_length()
+        # # self.content_type()
+        #
         self.feature_http_host()
-        #self.feature_http_request_uri()
-        #self.feature_http_response()
-        self.feature_http_server()
+        # self.feature_http_request_uri()
+        # #self.feature_http_response()
+        # self.feature_http_server()
         self.protocol()
         self.dstport()
         self.payload_size()
         self.time_delta()
 
         return self.formatted
+
 # dev="18-b4-30-c8-d8-28"
 # train_path=configuration.Train_loc
 # f_dns = open(train_path+dev+'-dns.csv')

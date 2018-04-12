@@ -14,6 +14,8 @@ from sklearn.externals.six import StringIO
 from IPython.display import Image
 from sklearn.tree import export_graphviz
 import pydotplus
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.model_selection import train_test_split
 
 import os
 
@@ -27,6 +29,7 @@ def readfiles(trainpath):
                 files.extend(filenames)
                 break
         return files
+
 def y_values(files):
 
         Y_train=set()
@@ -135,7 +138,13 @@ def gen_model(train,path,alg="DT",modeltype="Multiclass"):
                 print(alg)
                 model= svm.SVC(decision_function_shape='ovo')
 
-        model.fit(X_Train,Y_Train)
+        if alg == "RBF":
+                print(alg)
+                model = RandomForestClassifier(n_estimators=1000, criterion='entropy', max_features="auto",
+                                               max_leaf_nodes=None, bootstrap=False, oob_score=False,
+                                               n_jobs=1, random_state=None, verbose=0)
+
+        model.fit(X_Train, Y_Train)
         if alg=="DT":
                 print(alg)
                 dotfile = open("dtree2.dot", 'w')
@@ -155,14 +164,13 @@ if __name__ == "__main__":
         trainpath=configuration.Train_loc
         modelpath=str(configuration.Model_loc)
         #Set to False to create a new set of traning data and model,Set true to only generate a new model with existing data
-        parameters=True
+        parameters = False
         if not parameters:
-
                 trainfiles=readfiles(trainpath)
                 Y=y_values(trainfiles)
-                processXY(Y,trainpath,modelpath,train_files)
+                processXY(Y, trainpath, modelpath, train_files)
 
-        gen_model(train_files,modelpath,alg="SVM")
+        gen_model(train_files, modelpath, alg="DT")
 
 
 

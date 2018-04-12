@@ -5,7 +5,7 @@ import pickle
 from sklearn.metrics import accuracy_score,confusion_matrix,f1_score,recall_score,precision_score,classification_report,roc_auc_score,roc_curve
 import numpy as np
 
-def predict(testdata,modelpath,alg="DT"):
+def predict(testdata,modelpath,alg="SVM"):
 
     #print("The Algorithm used is" ,alg)
     filename = modelpath+'model_'+alg
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     testpath=configuration.Test_loc
     modelpath=configuration.Model_loc
     test_files=configuration.test_dataset
-    parameter=True
+    parameter=False
     if not parameter:
         filename = modelpath+'features'
         with open(filename, 'rb') as f:

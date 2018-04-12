@@ -31,7 +31,6 @@ First we need to run the pcap file parser in order to get the field we want:
             qname
             rname
             http_host
-            http_server
             protocol
             dstport
             payload_size
@@ -55,3 +54,9 @@ First we need to run the pcap file parser in order to get the field we want:
     pareses the config.ini file and passes as arguments to the classifeir and the prediction
     
     Spertare
+
+
+    Work flow: 1, run the rawdataparser.py to parse the pcap file of all devices. This will generate 9 csv files as output for each device.
+               2, put all the training data in a folder, and all test data in a folder. Then put all the path configuration to the config.ini.
+               3, run the classifier.py and set the parameter to false. That will generate a new model and a training.csv.
+               4, run the predict.py and set the parameter to false. That will apply the model on the test files and generate the accuracy.
