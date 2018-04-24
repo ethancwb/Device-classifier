@@ -50,7 +50,6 @@ def processXY(Y,trainpath,modelpath,train_files,type="Train",features="None"):
                 tail_http='-http.csv'
                 tail_dstport='-dstport.csv'
                 tail_general='-general.csv'
-                tail_payload='-payload.csv'
 
         elif type=="Test":
                 X=pd.DataFrame(columns=features)
@@ -58,7 +57,6 @@ def processXY(Y,trainpath,modelpath,train_files,type="Train",features="None"):
                 tail_http='-test-http.csv'
                 tail_dstport='-test-dstport.csv'
                 tail_general='-test-general.csv'
-                tail_payload='-test-payload.csv'
         for each in Y:
 
                 dns = trainpath+each+tail_dns
@@ -66,7 +64,6 @@ def processXY(Y,trainpath,modelpath,train_files,type="Train",features="None"):
 
                 dstport = trainpath+each+tail_dstport
                 general = trainpath+each+tail_general
-                payload = trainpath+each+tail_payload
 
                 try:
 
@@ -75,10 +72,8 @@ def processXY(Y,trainpath,modelpath,train_files,type="Train",features="None"):
                         df_http = pd.read_csv(http, error_bad_lines=False, sep='\t', low_memory=False)
                         df_dstport = pd.read_csv(dstport, error_bad_lines=False, sep='\t', low_memory=False)
                         df_general = pd.read_csv(general, error_bad_lines=False, sep='\t', low_memory=False)
-                        df_payload = pd.read_csv(payload, error_bad_lines=False, sep='\t', low_memory=False)
 
-
-                        d = feature_processor.data_feature_extractor(df, df_http, df_general, df_dstport, df_payload)
+                        d = feature_processor.data_feature_extractor(df, df_http, df_general, df_dstport)
                         features_dict=d.formatted_output()
                         print("Number of featueres for Device:-",len(features_dict))
 

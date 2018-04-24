@@ -85,7 +85,7 @@ def shrink_output_size(output_path, name, device, line_limit):
             for l in lines:
                 f.write(l)
     except:
-        print(file, " error")
+        print(f, " error")
 
 
 if __name__ == "__main__":

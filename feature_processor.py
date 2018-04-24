@@ -5,13 +5,14 @@ import json
 import statistics
 import configuration
 
+
 class data_feature_extractor:
-    def __init__(self, df,df_http,df_general,df_dstport,df_payload):
+    #
+    def __init__(self, df,df_http,df_general,df_dstport):
         self.dataframe = df
         self.dataframe_http=df_http
         self.dataframe_general=df_general
         self.dataframe_dstport=df_dstport
-        self.dataframe_payload=df_payload
         self.features = {}
         self.formatted = {
             "feature_strings": {},
@@ -23,7 +24,6 @@ class data_feature_extractor:
         self.totalPackets_http = len(self.dataframe_http)
         self.totalPackets_general = len(self.dataframe_general)
         self.totalPackets_dstport = len(self.dataframe_dstport)
-        self.totalPackets_payload = len(self.dataframe_payload)
 
     def feature_eth_src(self):
         ethsrc = self.dataframe["eth.src_resolved"]
@@ -305,6 +305,8 @@ class data_feature_extractor:
         self.time_delta()
 
         return self.formatted
+
+# below code runs the extractor for a single dir.
 
 # dev="18-b4-30-c8-d8-28"
 # train_path=configuration.Train_loc
