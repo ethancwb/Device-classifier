@@ -296,9 +296,9 @@ class data_feature_extractor:
         # # self.content_type()
         #
         self.feature_http_host()
-        # self.feature_http_request_uri()
+        self.feature_http_request_uri()
         # #self.feature_http_response()
-        # self.feature_http_server()
+        self.feature_http_server()
         self.protocol()
         self.dstport()
         self.payload_size()

@@ -129,20 +129,20 @@ def gen_model(train,path,alg="DT",modeltype="Multiclass"):
 
         if alg=="DT":
                 print(alg)
-                model = DecisionTreeClassifier(random_state=99)
+                model = DecisionTreeClassifier(criterion = "entropy", random_state = 50, max_features=1)
 
         if alg=="LG":
                 print(alg)
-                model = LogisticRegression(C=1., solver='lbfgs')
+                model = LogisticRegression(C=100, penalty='l1', solver='liblinear')
         if alg=="SVM":
                 print(alg)
                 model= svm.SVC(decision_function_shape='ovo')
 
         if alg == "RBF":
                 print(alg)
-                model = RandomForestClassifier(n_estimators=1000, criterion='entropy', max_features="auto",
+                model = RandomForestClassifier(n_estimators=1000, criterion='entropy', max_features=1,
                                                max_leaf_nodes=None, bootstrap=False, oob_score=False,
-                                               n_jobs=1, random_state=None, verbose=0)
+                                               n_jobs=1, random_state=99, verbose=0, class_weight="balanced")
 
         model.fit(X_Train, Y_Train)
         if alg=="DT":
@@ -164,13 +164,13 @@ if __name__ == "__main__":
         trainpath=configuration.Train_loc
         modelpath=str(configuration.Model_loc)
         #Set to False to create a new set of traning data and model,Set true to only generate a new model with existing data
-        parameters = False
+        parameters = True
         if not parameters:
                 trainfiles=readfiles(trainpath)
                 Y=y_values(trainfiles)
                 processXY(Y, trainpath, modelpath, train_files)
 
-        gen_model(train_files, modelpath, alg="DT")
+        gen_model(train_files, modelpath, alg="RBF")
 
 
 

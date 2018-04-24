@@ -35,7 +35,7 @@ if __name__ == "__main__":
     testpath=configuration.Test_loc
     modelpath=configuration.Model_loc
     test_files=configuration.test_dataset
-    parameter=False
+    parameter=True
     if not parameter:
         filename = modelpath+'features'
         with open(filename, 'rb') as f:
@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
         classifer.processXY(Y,testpath,modelpath,test_files,type="Test",features=features)
 
-    Y_Pred,Y_True=predict(test_files,modelpath,alg="DT")
+    Y_Pred,Y_True=predict(test_files,modelpath,alg="RBF")
     print(Y_True,Y_Pred)
 
     metrics(Y_Pred,Y_True)
