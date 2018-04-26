@@ -130,7 +130,7 @@ def gen_model(train,path,alg="DT",modeltype="Multiclass"):
 
         if alg=="DT":
                 print(alg)
-                model = DecisionTreeClassifier(criterion = "entropy", random_state = 50, max_features=1)
+                model = DecisionTreeClassifier(random_state=99)
 
         if alg=="LG":
                 print(alg)
@@ -145,9 +145,10 @@ def gen_model(train,path,alg="DT",modeltype="Multiclass"):
                 with open(filename, 'rb') as f:
                         features = pickle.load(f)
 
-                model = RandomForestClassifier(n_estimators=300, criterion='entropy', max_features=1,
+                model = RandomForestClassifier(n_estimators=1000, criterion='entropy', max_features=1,
                                                max_leaf_nodes=None, bootstrap=False, oob_score=False,
-                                               n_jobs=1, random_state=None, verbose=0)
+                                               n_jobs=1, random_state=49, verbose=0)
+
 
         model.fit(X_Train, Y_Train)
         if alg=="DT":
