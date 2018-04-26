@@ -16,31 +16,37 @@ def parse(path, output_path):
             # only needed if we need test files.
             test_file = max(glob.glob(path), key = os.path.getmtime)
 
-            # dns features
-            columns_dns = "-e ip.src -e ip.dst -e _ws.col.Protocol -e _ws.col.Length " \
-                          "-e eth.src -e eth.src_resolved -e eth.dst -e eth.dst_resolved " \
-                          "-e udp.port -e dns.a -e dns.aaaa -e dns.cname -e dns.count.answers " \
-                          "-e dns.count.add_rr -e dns.count.auth_rr -e dns.count.labels -e dns.count.prerequisites " \
-                          "-e dns.count.queries -e dns.count.updates -e dns.qry.name -e dns.qry.name.len" \
-                          " -e dns.qry.class -e dns.qry.type -e dns.resp.name -e dns.resp.type -e dns.resp.class" \
-                          " -e dns.resp.ttl -e dns.resp.len"
-            genericParser(path, output_path, columns_dns, "-Y 'dns'", test_file, "dns", d, 0)
+            # # dns features
+            # columns_dns = "-e ip.src -e ip.dst -e _ws.col.Protocol -e _ws.col.Length " \
+            #               "-e eth.src -e eth.src_resolved -e eth.dst -e eth.dst_resolved " \
+            #               "-e udp.port -e dns.a -e dns.aaaa -e dns.cname -e dns.count.answers " \
+            #               "-e dns.count.add_rr -e dns.count.auth_rr -e dns.count.labels -e dns.count.prerequisites " \
+            #               "-e dns.count.queries -e dns.count.updates -e dns.qry.name -e dns.qry.name.len" \
+            #               " -e dns.qry.class -e dns.qry.type -e dns.resp.name -e dns.resp.type -e dns.resp.class" \
+            #               " -e dns.resp.ttl -e dns.resp.len"
+            # genericParser(path, output_path, columns_dns, "-Y 'dns'", test_file, "dns", d, 0)
+            #
+            # # http features
+            # columns_http = "-e ip.src -e ip.dst -e _ws.col.Protocol -e _" \
+            #                "ws.col.Length -e eth.src -e eth.src_resolved -e eth.dst" \
+            #                " -e eth.dst_resolved -e tcp.port -e http.content_length -e http.content_type " \
+            #                "-e http.host -e http.request -e http.request.uri -e http.server -e http.time " \
+            #                "-e http.response.line"
+            # genericParser(path, output_path, columns_http, "-Y 'http'", test_file, "http", d, 0)
+            #
+            # # time delta and protocol features
+            # columns_general = "-e frame.protocols -e frame.time_delta"
+            # genericParser(path, output_path, columns_general, "", test_file, "general", d, 0)
+            #
+            # # port features
+            # columns_dstport = "-e tcp.dstport -e udp.dstport"
+            # genericParser(path, output_path, columns_dstport, "", test_file, "dstport", d, 0)
 
-            # http features
-            columns_http = "-e ip.src -e ip.dst -e _ws.col.Protocol -e _" \
-                           "ws.col.Length -e eth.src -e eth.src_resolved -e eth.dst" \
-                           " -e eth.dst_resolved -e tcp.port -e http.content_length -e http.content_type " \
-                           "-e http.host -e http.request -e http.request.uri -e http.server -e http.time " \
-                           "-e http.response.line"
-            genericParser(path, output_path, columns_http, "-Y 'http'", test_file, "http", d, 0)
+            # payload size features
+            columns_dstport = "-e ip.len -e ip.hdr_len -e tcp.hdr_len"
+            genericParser(path, output_path, columns_dstport, "", test_file, "payload", d, 0)
 
-            # time delta and protocol features
-            columns_general = "-e frame.protocols -e frame.time_delta"
-            genericParser(path, output_path, columns_general, "", test_file, "general", d, 0)
 
-            # port features
-            columns_dstport = "-e tcp.dstport -e udp.dstport"
-            genericParser(path, output_path, columns_dstport, "", test_file, "dstport", d, 0)
 
 # @params:
 # intput_path: input path

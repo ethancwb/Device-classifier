@@ -6,6 +6,7 @@ from os import walk,path
 import  numpy as np
 import configuration
 import pickle
+import math
 import glob
 from sklearn import svm
 from sklearn.linear_model import LogisticRegression
@@ -50,6 +51,7 @@ def processXY(Y,trainpath,modelpath,train_files,type="Train",features="None"):
                 tail_http='-http.csv'
                 tail_dstport='-dstport.csv'
                 tail_general='-general.csv'
+                tail_payload = '-payload.csv'
 
         elif type=="Test":
                 X=pd.DataFrame(columns=features)
@@ -57,6 +59,7 @@ def processXY(Y,trainpath,modelpath,train_files,type="Train",features="None"):
                 tail_http='-test-http.csv'
                 tail_dstport='-test-dstport.csv'
                 tail_general='-test-general.csv'
+                tail_payload = '-test-payload.csv'
         for each in Y:
 
                 dns = trainpath+each+tail_dns
@@ -64,21 +67,24 @@ def processXY(Y,trainpath,modelpath,train_files,type="Train",features="None"):
 
                 dstport = trainpath+each+tail_dstport
                 general = trainpath+each+tail_general
+                payload = trainpath + each + tail_payload
 
                 try:
 
                         print("Processing  data for device",each)
+                        print (trainpath, each, tail_dstport)
                         df = pd.read_csv(dns, error_bad_lines=False, sep='\t', low_memory=False)
                         df_http = pd.read_csv(http, error_bad_lines=False, sep='\t', low_memory=False)
                         df_dstport = pd.read_csv(dstport, error_bad_lines=False, sep='\t', low_memory=False)
                         df_general = pd.read_csv(general, error_bad_lines=False, sep='\t', low_memory=False)
+                        df_payload = pd.read_csv(payload, error_bad_lines=False, sep='\t', low_memory=False)
 
-                        d = feature_processor.data_feature_extractor(df, df_http, df_general, df_dstport)
+                        d = feature_processor.data_feature_extractor(df, df_http, df_general, df_dstport, df_payload)
                         features_dict=d.formatted_output()
                         print("Number of featueres for Device:-",len(features_dict))
 
                         for obj in features_dict:
-
+                                print("working on: %s", obj)
                                 if obj=="others":
                                         if len(features_dict[obj])>0 and isinstance(features_dict[obj],dict):
 
@@ -135,9 +141,13 @@ def gen_model(train,path,alg="DT",modeltype="Multiclass"):
 
         if alg == "RBF":
                 print(alg)
-                model = RandomForestClassifier(n_estimators=1000, criterion='entropy', max_features=1,
+                filename = path + 'features'
+                with open(filename, 'rb') as f:
+                        features = pickle.load(f)
+
+                model = RandomForestClassifier(n_estimators=300, criterion='entropy', max_features=1,
                                                max_leaf_nodes=None, bootstrap=False, oob_score=False,
-                                               n_jobs=1, random_state=99, verbose=0, class_weight="balanced")
+                                               n_jobs=1, random_state=None, verbose=0)
 
         model.fit(X_Train, Y_Train)
         if alg=="DT":
@@ -159,7 +169,7 @@ if __name__ == "__main__":
         trainpath=configuration.Train_loc
         modelpath=str(configuration.Model_loc)
         #Set to False to create a new set of traning data and model,Set true to only generate a new model with existing data
-        parameters = True
+        parameters = False
         if not parameters:
                 trainfiles=readfiles(trainpath)
                 Y=y_values(trainfiles)

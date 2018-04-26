@@ -1,8 +1,23 @@
 Classifier:
 
-First we need to run the pcap file parser in order to get the field we want:
+configuration parameters:
 
-    Parser_for_insteon_hub.py:
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+location_Train: This path contains the files
+location_Test:
+model:
+classses:
+train_dataset:
+test_dataset:
+parameter:
+pcap_location:
+output_location:
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+First we need to run the pcap file parser in order to get the fields we want:
+
+    rawdataparser.py:
         Take in a main path and goes into every sub-directory and loop through all the pcap files.
         For example, take in "unctrl/", it will loop through every sub-directory(each sub-directory is a device) inside unctrl folder.
         The script will generate 7 csv files for each device. And it will not stop until it finishes all the devices inside the main
@@ -20,7 +35,7 @@ First we need to run the pcap file parser in order to get the field we want:
  
  After that, we need to run the feature extractor to extract the features we need to pass into the machine learning model:
     
-    dns_data_processor.py:
+    feature_processor.py:
         This file contains the feature extractor for the 5 main files. The file take 5 files(dns, http, general, dstport, payload) as input, will return the
         extracted feature dictionary in the end. Each time we run the file, it will finish the feature extraction for one device. This file is being looped again
         and again by the main classifier file in order to get all the extracted features for all devices. 

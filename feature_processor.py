@@ -8,11 +8,12 @@ import configuration
 
 class data_feature_extractor:
     #
-    def __init__(self, df,df_http,df_general,df_dstport):
+    def __init__(self, df,df_http,df_general,df_dstport,df_payload):
         self.dataframe = df
         self.dataframe_http=df_http
         self.dataframe_general=df_general
         self.dataframe_dstport=df_dstport
+        self.dataframe_payload = df_payload
         self.features = {}
         self.formatted = {
             "feature_strings": {},
@@ -20,10 +21,30 @@ class data_feature_extractor:
             "total_packets": {},
             'others':{}
         }
-        self.totalPackets_dns = len(self.dataframe)
-        self.totalPackets_http = len(self.dataframe_http)
-        self.totalPackets_general = len(self.dataframe_general)
-        self.totalPackets_dstport = len(self.dataframe_dstport)
+        if len(self.dataframe) == 0:
+            self.totalPackets_dns = 1
+        else:
+            self.totalPackets_dns = len(self.dataframe)
+
+        if len(self.dataframe_http) == 0:
+            self.totalPackets_http = 1
+        else:
+            self.totalPackets_http = len(self.dataframe_http)
+
+        if len(self.dataframe_general) == 0:
+            self.totalPackets_general = 1
+        else:
+            self.totalPackets_general = len(self.dataframe_general)
+
+        if len(self.dataframe_dstport) == 0:
+            self.totalPackets_dstport = 1
+        else:
+            self.totalPackets_dstport = len(self.dataframe_dstport)
+
+        if len(self.dataframe_payload) == 0:
+            self.totalPackets_payload = 1
+        else:
+            self.totalPackets_payload = len(self.dataframe_payload)
 
     def feature_eth_src(self):
         ethsrc = self.dataframe["eth.src_resolved"]
@@ -201,7 +222,11 @@ class data_feature_extractor:
             ip_hdr_len = row[1]
             tcp_hdr_len = row[2]
             if "," not in str(ip_len) or "," not in (ip_hdr_len):
-                payload_array.append(float(ip_len) - float(ip_hdr_len) - float(tcp_hdr_len))
+                try:
+                    payload_array.append(float(ip_len) - float(ip_hdr_len) - float(tcp_hdr_len))
+                except:
+                    pass
+
         payload_array = list(filter(lambda x : x != float(0.0), payload_array))
         self.formatted['others']['payload_max'] = max(payload_array)
         self.formatted['others']['payload_mean'] = np.mean(payload_array)
@@ -296,9 +321,9 @@ class data_feature_extractor:
         # # self.content_type()
         #
         self.feature_http_host()
-        self.feature_http_request_uri()
+        # self.feature_http_request_uri()
         # #self.feature_http_response()
-        self.feature_http_server()
+        # self.feature_http_server()
         self.protocol()
         self.dstport()
         self.payload_size()
@@ -307,24 +332,23 @@ class data_feature_extractor:
         return self.formatted
 
 # below code runs the extractor for a single dir.
-
-# dev="18-b4-30-c8-d8-28"
+# #
+# dev="6c-56-97-35-39-f4"
 # train_path=configuration.Train_loc
 # f_dns = open(train_path+dev+'-dns.csv')
 # f_http = open(train_path+dev+'-http.csv')
 # f_general = open(train_path+dev+'-general.csv')
 # f_dstport = open(train_path+dev+'-dstport.csv')
-# f_payload = open(train_path+dev+'-payload.csv')
+# f_payload = open(train_path+dev+'payload.csv')
 # df = pd.read_csv(f_dns, error_bad_lines=False, sep='\t')
-#
 # df_http = pd.read_csv(f_http, error_bad_lines=False, sep='\t')
 # print("here")
 # df_general = pd.read_csv(f_general,low_memory=False,error_bad_lines=False, sep='\t')
 # print("here")
 # df_dstport = pd.read_csv(f_dstport, low_memory=False,error_bad_lines=False, sep='\t')
 # print("here")
-# df_payload = pd.read_csv(f_payload, error_bad_lines=False, sep='\t')
-# print('here')
+# df_payload = pd.read_csv(f_payload, low_memory=False,error_bad_lines=False, sep='\t')
+# print("here")
 #
 # d = data_feature_extractor(df, df_http, df_general, df_dstport, df_payload)
 # print(d.formatted_output())

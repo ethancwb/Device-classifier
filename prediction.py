@@ -23,11 +23,11 @@ def predict(testdata,modelpath,alg="SVM"):
 def metrics(Y_Pred,Y_True):
 
     print ('Accuracy:', accuracy_score(Y_True, Y_Pred)*100)
-    #print ('F1 score:', f1_score(Y_True, Y_Pred,average='micro'))
-    #print ('Recall:', recall_score(Y_True, Y_Pred,average='micro'))
-    #print ('Precision:', precision_score(Y_True, Y_Pred,average='micro'))
-    #print ('\n clasification report:\n', classification_report(Y_True,Y_Pred))
-    #print ('\n confussion matrix:\n',confusion_matrix(Y_True, Y_Pred))
+    print ('F1 score:', f1_score(Y_True, Y_Pred,average='micro'))
+    print ('Recall:', recall_score(Y_True, Y_Pred,average='micro'))
+    print ('Precision:', precision_score(Y_True, Y_Pred,average='micro'))
+    print ('\n clasification report:\n', classification_report(Y_True,Y_Pred))
+    print ('\n confussion matrix:\n',confusion_matrix(Y_True, Y_Pred))
 
 
 if __name__ == "__main__":
