@@ -7,7 +7,6 @@ import configuration
 
 
 class data_feature_extractor:
-    #
     def __init__(self, df,df_http,df_general,df_dstport,df_payload):
         self.dataframe = df
         self.dataframe_http=df_http
@@ -312,18 +311,10 @@ class data_feature_extractor:
 
     def formatted_output(self):
         self.feature_eth_src()
-        # # self.pckt_length()
-        # # self.dsn_answers_A()
         self.cname()
         self.qname()
         self.rname()
-        # # self.content_length()
-        # # self.content_type()
-        #
-        self.feature_http_host()
-        # self.feature_http_request_uri()
-        # #self.feature_http_response()
-        # self.feature_http_server()
+        self.feature_http_request_uri()
         self.protocol()
         self.dstport()
         self.payload_size()
@@ -333,13 +324,13 @@ class data_feature_extractor:
 
 # below code runs the extractor for a single dir.
 # #
-# dev="6c-56-97-35-39-f4"
+# dev="0-71-47-c0-91-93"
 # train_path=configuration.Train_loc
 # f_dns = open(train_path+dev+'-dns.csv')
 # f_http = open(train_path+dev+'-http.csv')
 # f_general = open(train_path+dev+'-general.csv')
 # f_dstport = open(train_path+dev+'-dstport.csv')
-# f_payload = open(train_path+dev+'payload.csv')
+# f_payload = open(train_path+dev+'-payload.csv')
 # df = pd.read_csv(f_dns, error_bad_lines=False, sep='\t')
 # df_http = pd.read_csv(f_http, error_bad_lines=False, sep='\t')
 # print("here")

@@ -145,9 +145,9 @@ def gen_model(train,path,alg="DT",modeltype="Multiclass"):
                 with open(filename, 'rb') as f:
                         features = pickle.load(f)
 
-                model = RandomForestClassifier(n_estimators=1000, criterion='entropy', max_features=1,
+                model = RandomForestClassifier(n_estimators=100, criterion='entropy', max_features="auto",
                                                max_leaf_nodes=None, bootstrap=False, oob_score=False,
-                                               n_jobs=1, random_state=49, verbose=0)
+                                               n_jobs=1, random_state=None, verbose=0)
 
 
         model.fit(X_Train, Y_Train)
@@ -170,7 +170,7 @@ if __name__ == "__main__":
         trainpath=configuration.Train_loc
         modelpath=str(configuration.Model_loc)
         #Set to False to create a new set of traning data and model,Set true to only generate a new model with existing data
-        parameters = False
+        parameters = True
         if not parameters:
                 trainfiles=readfiles(trainpath)
                 Y=y_values(trainfiles)

@@ -24,7 +24,7 @@ def parse(path, output_path):
                           "-e dns.count.queries -e dns.count.updates -e dns.qry.name -e dns.qry.name.len" \
                           " -e dns.qry.class -e dns.qry.type -e dns.resp.name -e dns.resp.type -e dns.resp.class" \
                           " -e dns.resp.ttl -e dns.resp.len"
-            genericParser(path, output_path, columns_dns, " -Y 'dns'", test_file, "dns", d, 500)
+            genericParser(path, output_path, columns_dns, " -Y 'dns'", test_file, "dns", d, 100)
 
             # http features
             columns_http = "-e ip.src -e ip.dst -e _ws.col.Protocol -e _" \
@@ -36,15 +36,15 @@ def parse(path, output_path):
 
             # time delta and protocol features
             columns_general = "-e frame.protocols -e frame.time_delta"
-            genericParser(path, output_path, columns_general, "", test_file, "general", d, 0)
+            genericParser(path, output_path, columns_general, "", test_file, "general", d, 100)
 
             # port features
             columns_dstport = "-e tcp.dstport -e udp.dstport"
-            genericParser(path, output_path, columns_dstport, "", test_file, "dstport", d, 0)
+            genericParser(path, output_path, columns_dstport, "", test_file, "dstport", d, 100)
 
             # payload size features
             columns_dstport = "-e ip.len -e ip.hdr_len -e tcp.hdr_len"
-            genericParser(path, output_path, columns_dstport, "", test_file, "payload", d, 500)
+            genericParser(path, output_path, columns_dstport, "", test_file, "payload", d, 100)
 
 
 
@@ -66,7 +66,6 @@ def genericParser(intput_path, output_path, columns, fields, test_file, name, de
         command = "tshark -r " + f + fields + " -T fields -E header=y -E separator=/t, " + columns + output
         os.system(command)
     if shrink_count:
-        print('here')
         shrink_output_size(output_path, name, device, shrink_count)
 
         # dns_file = "csvs/" + d.replace(':', '-') + "-dns.csv"
